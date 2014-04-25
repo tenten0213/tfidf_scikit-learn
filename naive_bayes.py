@@ -5,7 +5,7 @@ import MeCab
 class NaiveBayes():
     def __init__(self):
         self.vocabularies = set()
-        self.category_count = {}
+        self.word_count = {}
         self.category_count = {}
 
     def to_words(self, sentence):
@@ -16,6 +16,8 @@ class NaiveBayes():
 
         for info in info_of_words:
             # mecabで分けると分の最後の''が、その手前に'EOS'がくる
+            if info == 'EOS' or info == '':
+                break
             # 6番目には無活用形の単語が入る
             info_elems = info.split(',')
 
