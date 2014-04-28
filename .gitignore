@@ -5,6 +5,9 @@ __pycache__/
 # API key file
 my_api_keys.py
 
+# fetched web pages
+fetched_pages/
+
 # C extensions
 *.so
 
