@@ -8,6 +8,7 @@ class NaiveBayes():
         self.word_count = {}
         self.category_count = {}
 
+    u"""入力された文字列をMeCabで単語のリストに分解する"""
     def to_words(self, sentence):
         tagger = MeCab.Tagger('mecabrc') # Tagger
         mecab_result = tagger.parse(sentence)
@@ -27,32 +28,38 @@ class NaiveBayes():
             words.append(info_elems[6])
         return tuple(words)
 
+    u"""各単語が何回出現したか数え上げる"""
     def word_count_up(self, word, category):
         self.word_count.setdefault(category, {})
         self.word_count[category].setdefault(word, 0)
         self.word_count[category][word] += 1
         self.vocabularies.add(word)
 
+    u"""入力されたカテゴリがこれまで何度入力されたか数え上げる"""
     def category_count_up(self, category):
         self.category_count.setdefault(category, 0)
         self.category_count[category] +=1
 
+    u"""学習"""
     def train(self, doc, category):
         words = self.to_words(doc)
         for word in words:
             self.word_count_up(word, category)
         self.category_count_up(category)
 
+    u"""事前確率(Prior probability)"""
     def prior_prob(self, category):
         num_of_categories = sum(self.category_count.values())
         num_of_docs_of_the_category = self.category_count[category]
         return num_of_docs_of_the_category / num_of_categories
 
+    u"""出現回数"""
     def num_of_appearance(self, word, category):
         if word in self.word_count[category]:
             return self.word_count[category][word]
         return 0
 
+    u"""Wordの出現確率?"""
     def word_prob(self, word, category):
         # ベイズの法則の計算。通常は非常に0に近い小数になる
         numerator = self.num_of_appearance(word, category) + 1
@@ -61,6 +68,9 @@ class NaiveBayes():
         prob = numerator / denominator
         return prob
 
+    u"""確率の計算
+        ベイズの法則の公式により算出された確率の値は非常に0に近くなるので、
+        0に近くても計算できるよう、eで対数を取っている。"""
     def score(self, words, category):
         # logを取るのは、 word_probが0.000.....01くらいの小数になったりするため
         score = math.log(self.prior_prob(category))
@@ -68,12 +78,16 @@ class NaiveBayes():
             score += math.log(self.word_prob(word, category))
         return score
 
+    u"""確率の計算(log取らないver.)
+        underflowするかも"""
     def score_without_log(self, words, category):
         score = self.prior_prob(category)
         for word in words:
             score *= self.word_prob(word, category)
         return score
 
+    u"""分類
+        入力された文章がはいるのが一番もっともらしいのはどれか"""
     def classify(self, doc):
         best_guessed_category = None
         max_prob_before = -sys.maxsize
@@ -84,7 +98,7 @@ class NaiveBayes():
             if prob > max_prob_before:
                 max_prob_before = prob
                 best_guessed_category = category
-            return best_guessed_category
+        return best_guessed_category
 
 if __name__ == '__main__':
     nb = NaiveBayes()
