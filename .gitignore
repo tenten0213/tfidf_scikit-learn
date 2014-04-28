@@ -8,6 +8,9 @@ my_api_keys.py
 # fetched web pages
 fetched_pages/
 
+# pickle
+*.pkl
+
 # C extensions
 *.so
 
