@@ -50,7 +50,7 @@ def load_html_files_with_query(query):
     for i in range(constants.NUM_OF_FETCHED_PAGES):
         with open('%s_%s.html' % (query, str(i)), 'r') as f:
             page = WebPage()
-            page.html_body = f.read(0)
+            page.html_body = f.read()
         page.remove_html_tags()
         pages.append(page)
     return pages
@@ -63,4 +63,4 @@ def load_html_files():
 def go_to_fetched_pages_dir():
     if not os.path.exists(constants.FETCHED_PAGES_DIR_NAME):
         os.mkdir(constants.FETCHED_PAGES_DIR_NAME)
-    os.chidr(constants.FETCHED_PAGES_DIR_NAME)
+    os.chdir(constants.FETCHED_PAGES_DIR_NAME)
